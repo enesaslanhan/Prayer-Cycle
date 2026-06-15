@@ -1,0 +1,6 @@
+@PrayerCycle.API_HostAddress = http://localhost:5159
+
+GET {{PrayerCycle.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
