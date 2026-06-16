@@ -1,4 +1,5 @@
 using MediatR;
+using PrayerCycle.Application.Common.Abstractions;
 using PrayerCycle.Application.Common.Exceptions;
 using PrayerCycle.Domain.Users;
 
@@ -8,13 +9,16 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
 {
     private readonly IUserReadRepository _readRepository;
     private readonly IUserWriteRepository _writeRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
     public UpdateUserCommandHandler(
         IUserReadRepository readRepository,
-        IUserWriteRepository writeRepository)
+        IUserWriteRepository writeRepository,
+        IPasswordHasher passwordHasher)
     {
         _readRepository = readRepository;
         _writeRepository = writeRepository;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -39,9 +43,9 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
         {
             user.ChangeDisplayName(DisplayName.Create(request.DisplayName));
 
-            if (request.PasswordHash is not null)
+            if (request.Password is not null)
             {
-                user.SetPasswordHash(HashedPassword.Create(request.PasswordHash));
+                user.SetPasswordHash(HashedPassword.Create(_passwordHasher.Hash(request.Password)));
             }
         }
 

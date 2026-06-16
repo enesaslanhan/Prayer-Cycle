@@ -1,5 +1,6 @@
 using MediatR;
 using PrayerCycle.Application.Users.Dtos;
+using PrayerCycle.Application.Common.Abstractions;
 using PrayerCycle.Domain.Users;
 
 namespace PrayerCycle.Application.Users.Commands.CreateUser;
@@ -8,13 +9,16 @@ public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand
 {
     private readonly IUserReadRepository _readRepository;
     private readonly IUserWriteRepository _writeRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
     public CreateUserCommandHandler(
         IUserReadRepository readRepository,
-        IUserWriteRepository writeRepository)
+        IUserWriteRepository writeRepository,
+        IPasswordHasher passwordHasher)
     {
         _readRepository = readRepository;
         _writeRepository = writeRepository;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -28,8 +32,8 @@ public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand
             throw new InvalidOperationException("A user with this email already exists.");
         }
 
-        var user = request.PasswordHash is not null
-            ? User.RegisterWithPassword(email, HashedPassword.Create(request.PasswordHash), displayName)
+        var user = request.Password is not null
+            ? User.RegisterWithPassword(email, HashedPassword.Create(_passwordHasher.Hash(request.Password)), displayName)
             : User.RegisterWithGoogle(email, displayName);
 
         await _writeRepository.AddAsync(user, cancellationToken);

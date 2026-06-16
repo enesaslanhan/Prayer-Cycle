@@ -15,8 +15,10 @@ public sealed class UpdateUserCommandValidator : AbstractValidator<UpdateUserCom
             .MinimumLength(DisplayName.MinLength)
             .MaximumLength(DisplayName.MaxLength);
 
-        RuleFor(command => command.PasswordHash)
+        RuleFor(command => command.Password)
             .NotEmpty()
-            .When(command => command.PasswordHash is not null);
+            .MinimumLength(8)
+            .MaximumLength(128)
+            .When(command => command.Password is not null);
     }
 }

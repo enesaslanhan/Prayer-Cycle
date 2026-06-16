@@ -10,6 +10,7 @@ using PrayerCycle.Persistence.Context;
 using PrayerCycle.Persistence.Families;
 using PrayerCycle.Persistence.FamilyMembers;
 using PrayerCycle.Persistence.PrayerLogs;
+using PrayerCycle.Persistence.Security;
 using PrayerCycle.Persistence.Users;
 
 namespace PrayerCycle.Persistence;
@@ -36,6 +37,8 @@ public static class ServiceRegistration
         services.AddScoped<IFamilyMemberWriteRepository, FamilyMemberWriteRepository>();
         services.AddScoped<IPrayerLogReadRepository, PrayerLogReadRepository>();
         services.AddScoped<IPrayerLogWriteRepository, PrayerLogWriteRepository>();
+
+        services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
 
         return services;
     }

@@ -39,7 +39,7 @@ public static class UserEndpoints
                 await sender.Send(createUserCommand, cancellationToken))
             .WithName("CreateUser")
             .WithSummary("Yeni kullanıcı oluşturur")
-            .WithDescription("E-posta ve görünen ad ile yeni kullanıcı kaydı oluşturur. Şifre hash'i opsiyoneldir.")
+            .WithDescription("E-posta ve görünen ad ile yeni kullanıcı kaydı oluşturur. Şifre opsiyoneldir; gönderilirse sistemde hash'lenerek saklanır.")
             .Produces<UserDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict);
@@ -55,7 +55,7 @@ public static class UserEndpoints
             })
             .WithName("UpdateUser")
             .WithSummary("Kullanıcıyı günceller")
-            .WithDescription("Görünen ad, şifre hash'i ve aktiflik durumunu günceller.")
+            .WithDescription("Görünen ad, şifre ve aktiflik durumunu günceller. Şifre gönderilirse sistemde hash'lenerek saklanır.")
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
