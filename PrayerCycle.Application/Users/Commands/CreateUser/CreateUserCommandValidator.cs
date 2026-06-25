@@ -19,7 +19,6 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
         RuleFor(command => command.Password)
             .NotEmpty()
             .MinimumLength(8)
-            .MaximumLength(128)
-            .When(command => command.Password is not null);
+            .MaximumLength(128);
     }
 }

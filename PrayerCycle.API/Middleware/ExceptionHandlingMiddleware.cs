@@ -2,6 +2,7 @@ using System.Text.Json;
 using FluentValidation;
 using PrayerCycle.Application.Common.Exceptions;
 using PrayerCycle.Domain.Common;
+using PrayerCycle.Domain.Users;
 
 namespace PrayerCycle.API.Middleware;
 
@@ -45,6 +46,14 @@ public sealed class ExceptionHandlingMiddleware
             NotFoundException notFoundException => (
                 StatusCodes.Status404NotFound,
                 notFoundException.Message,
+                null),
+            InvalidCredentialsException invalidCredentialsException => (
+                StatusCodes.Status401Unauthorized,
+                invalidCredentialsException.Message,
+                null),
+            UserInactiveException userInactiveException => (
+                StatusCodes.Status403Forbidden,
+                userInactiveException.Message,
                 null),
             DomainException domainException => (
                 StatusCodes.Status400BadRequest,

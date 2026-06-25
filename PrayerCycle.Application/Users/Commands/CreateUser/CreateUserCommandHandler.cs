@@ -32,9 +32,8 @@ public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand
             throw new InvalidOperationException("A user with this email already exists.");
         }
 
-        var user = request.Password is not null
-            ? User.RegisterWithPassword(email, HashedPassword.Create(_passwordHasher.Hash(request.Password)), displayName)
-            : User.RegisterWithGoogle(email, displayName);
+        var passwordHash = HashedPassword.Create(_passwordHasher.Hash(request.Password));
+        var user = User.RegisterWithPassword(email, passwordHash, displayName);
 
         await _writeRepository.AddAsync(user, cancellationToken);
 

@@ -1,6 +1,7 @@
 using MediatR;
 using PrayerCycle.Application.Users.Commands.CreateUser;
 using PrayerCycle.Application.Users.Commands.DeleteUser;
+using PrayerCycle.Application.Users.Commands.LoginUser;
 using PrayerCycle.Application.Users.Commands.UpdateUser;
 using PrayerCycle.Application.Users.Dtos;
 using PrayerCycle.Application.Users.Queries.GetUserById;
@@ -32,6 +33,20 @@ public static class UserEndpoints
             .Produces(StatusCodes.Status404NotFound);
 
         group
+            .MapPost("login", async (
+                ISender sender,
+                LoginUserCommand loginUserCommand,
+                CancellationToken cancellationToken) =>
+                await sender.Send(loginUserCommand, cancellationToken))
+            .WithName("LoginUser")
+            .WithSummary("Kullanıcı girişi yapar")
+            .WithDescription("E-posta ve şifre ile giriş yapar. Başarılı girişte kullanıcı bilgilerini döner.")
+            .Produces<UserDto>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden);
+
+        group
             .MapPost(string.Empty, async (
                 ISender sender,
                 CreateUserCommand createUserCommand,
@@ -39,7 +54,7 @@ public static class UserEndpoints
                 await sender.Send(createUserCommand, cancellationToken))
             .WithName("CreateUser")
             .WithSummary("Yeni kullanıcı oluşturur")
-            .WithDescription("E-posta ve görünen ad ile yeni kullanıcı kaydı oluşturur. Şifre opsiyoneldir; gönderilirse sistemde hash'lenerek saklanır.")
+            .WithDescription("E-posta, görünen ad ve şifre ile yeni kullanıcı kaydı oluşturur. Şifre sistemde hash'lenerek saklanır.")
             .Produces<UserDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict);

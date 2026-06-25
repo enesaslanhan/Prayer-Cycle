@@ -1,4 +1,5 @@
 using MediatR;
+using PrayerCycle.Application.FamilyMembers.Commands.AddUserToFamily;
 using PrayerCycle.Application.FamilyMembers.Commands.CreateFamilyMember;
 using PrayerCycle.Application.FamilyMembers.Commands.DeleteFamilyMember;
 using PrayerCycle.Application.FamilyMembers.Commands.UpdateFamilyMember;
@@ -45,6 +46,18 @@ public static class FamilyMemberEndpoints
             .WithSummary("Yeni aile üyesi oluşturur")
             .WithDescription("Ebeveyn veya çocuk profili olarak yeni aile üyesi ekler.")
             .Produces<FamilyMemberDto>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
+
+        group
+            .MapPost("with-user", async (
+                ISender sender,
+                AddUserToFamilyCommand addUserToFamilyCommand,
+                CancellationToken cancellationToken) =>
+                await sender.Send(addUserToFamilyCommand, cancellationToken))
+            .WithName("AddUserToFamily")
+            .WithSummary("Aileye yeni kullanıcı ekler")
+            .WithDescription("Yeni kullanıcı hesabı oluşturur ve belirtilen aileye ebeveyn üyesi olarak ekler.")
+            .Produces<AddUserToFamilyResultDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
         group

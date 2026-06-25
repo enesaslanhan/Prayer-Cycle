@@ -6,4 +6,4 @@ namespace PrayerCycle.Application.Users.Commands.CreateUser;
 public sealed record CreateUserCommand(
     string Email,
     string DisplayName,
-    string? Password) : IRequest<UserDto>;
+    string Password) : IRequest<UserDto>;
